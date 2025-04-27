@@ -16,5 +16,10 @@ namespace RecipeApi.Repository.IRepository
         Task<List<Recipe>> GetUserRecipesAsync(int userId);
         Task<bool> RemoveFavoriteAsync(int userId, int recipeId);
         Task<bool> UpdateUserAsync(int userId, UpdateUserDTO updatedUser);
+        Task<bool> AddFridgeingredientsAsync(int userId, List<string> ingredients);
+        Task<bool> UpdateFridgeingredientsAsync(int userId, List<string> ingredients);
+        Task<bool> DeleteFridgeingredientsAsync(int userId, string ingredient);
+        Task<List<string>> GetFridgeingredientsAsync(int userId);
+
     }
 }

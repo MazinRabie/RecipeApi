@@ -14,11 +14,13 @@ namespace RecipeApi.Controllers
 
     {
         private readonly IRecipeRepository _recipeRepo;
+        private readonly IUserRepository _userRepo;
         private readonly IMapper mapper;
 
-        public RecipeController(IRecipeRepository recipeRepo, IMapper mapper)
+        public RecipeController(IRecipeRepository recipeRepo, IUserRepository userRepo, IMapper mapper)
         {
             _recipeRepo = recipeRepo;
+            _userRepo = userRepo;
             this.mapper = mapper;
         }
         // POST: /api/recipes/CreateRecipe
@@ -80,6 +82,20 @@ namespace RecipeApi.Controllers
         [HttpPost("suggestions")]
         public async Task<IActionResult> GetSuggestedRecipes([FromBody] List<string> availableIngredients, [FromQuery] double threshold = 30)
         {
+            if (availableIngredients == null || !availableIngredients.Any())
+                return BadRequest("No ingredients provided.");
+
+            var recipes = await _recipeRepo.GetRecipesByPartialIngredientsAsync(availableIngredients, threshold);
+
+            if (recipes == null || recipes.Count == 0)
+                return NotFound("No matching recipes found.");
+
+            return Ok(recipes);
+        }
+        [HttpPost("Fridgesuggestions/{id}")]
+        public async Task<IActionResult> GetSuggestedRecipes([FromRoute] int id, [FromQuery] double threshold = 30)
+        {
+            var availableIngredients = await _userRepo.GetFridgeingredientsAsync(id);
             if (availableIngredients == null || !availableIngredients.Any())
                 return BadRequest("No ingredients provided.");
 

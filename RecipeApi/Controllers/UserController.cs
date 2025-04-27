@@ -102,6 +102,31 @@ namespace RecipeApi.Controllers
             return result ? Ok("User updated") : NotFound("User not found");
         }
 
+        [HttpPost("AddToFridge/{id}")]
+        public async Task<IActionResult> AddToFridge([FromRoute] int id, [FromBody] List<string> ingredients)
+        {
+            var IsSucc = await _userRepo.AddFridgeingredientsAsync(id, ingredients);
+            return Ok(IsSucc);
+        }
+        [HttpPut("UpdateFridge/{id}")]
+        public async Task<IActionResult> UpadteFridge([FromRoute] int id, [FromBody] List<string> ingredients)
+        {
+            var IsSucc = await _userRepo.UpdateFridgeingredientsAsync(id, ingredients);
+            return Ok(IsSucc);
+        }
+        [HttpDelete("DeleteFromFridge/{id}")]
+        public async Task<IActionResult> UpadteFridge([FromRoute] int id, [FromBody] string ingredient)
+        {
+            var IsSucc = await _userRepo.DeleteFridgeingredientsAsync(id, ingredient);
+            return Ok(IsSucc);
+        }
+        [HttpGet("GetFromFridge/{id}")]
+        public async Task<IActionResult> UpadteFridge([FromRoute] int id)
+        {
+            var fridgeIngredients = await _userRepo.GetFridgeingredientsAsync(id);
+            return Ok(fridgeIngredients);
+        }
+
     }
 
 

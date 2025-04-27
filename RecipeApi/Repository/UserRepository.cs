@@ -136,5 +136,49 @@ namespace RecipeApi.Repository
                 .Where(r => r.AuthorId == userId)
                 .ToListAsync();
         }
+
+
+        public async Task<bool> AddFridgeingredientsAsync(int userId, List<string> ingredients)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return false;
+
+
+            var merged = new HashSet<string>((user.Fridgeingredients == null) ? new List<string>() : user.Fridgeingredients);
+            merged.UnionWith(ingredients);
+            ;
+            user.Fridgeingredients = merged.Select(x => x.ToLower()).ToList();
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> DeleteFridgeingredientsAsync(int userId, string ingredient)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return false;
+            var userFridge = user.Fridgeingredients;
+            userFridge.Remove(ingredient);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> UpdateFridgeingredientsAsync(int userId, List<string> ingredients)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return false;
+            user.Fridgeingredients = ingredients;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<string>>? GetFridgeingredientsAsync(int userId)
+        {
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return null;
+            var userFridge = user.Fridgeingredients;
+            return userFridge;
+        }
+
+
+
     }
 }
